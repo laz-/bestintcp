@@ -47,8 +47,9 @@ def setup(haas, config):
         haas.helpers.discovery.load_platform('light', DOMAIN, rooms, config)
     if conf['enable_switches']:
         haas.helpers.discovery.load_platform('switch', DOMAIN, rooms, config)
+    if conf['enable_thermostats']:
+        haas.helpers.discovery.load_platform('climate', DOMAIN, rooms, config)
 
-    # haas.helpers.discovery.load_platform('climate', DOMAIN, rooms, config)
     # haas.helpers.discovery.load_platform('fan', DOMAIN, {}, config)
     # haas.helpers.discovery.load_platform('gas', DOMAIN, {}, config)
     # haas.helpers.discovery.load_platform('elevator', DOMAIN, {}, config)
