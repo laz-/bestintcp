@@ -1,7 +1,5 @@
 """Platform for Bestin TCP switch integration."""
 
-# async component so that calls can better be done by room instead of by switch entity.
-#
 import voluptuous as vol
 
 # Import the device class from the component that you want to support
@@ -21,6 +19,8 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from . import DOMAIN
 
+
+# async component so that calls can better be done by room instead of by switch entity.
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     rooms = discovery_info
     async def async_update_data():
