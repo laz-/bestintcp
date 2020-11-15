@@ -107,7 +107,7 @@ class BestinTCP():
 
         mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         mysocket.connect((self.host, self.port))
-        
+
         mysocket.sendall(request)
         # XXX this will break for big responses
         response = mysocket.recv(READ_SIZE)
@@ -256,8 +256,22 @@ class BestinRoom():
         self.heat_target_temp = temps[1]
         self.temperature = temps[2]
 
+    def setTemperStatus(self, onoff, temperature=None):
+        assert(onoff in ('on', 'off'))
+        if not temperature:
+            temperature = self.heat_target_temp
+        response = self.tcp.XMLRequest('remote_access_temper', 'control', dev_num='1', unit_num=f"room{self.name}", ctrl_action=f"{onoff}/{temperature}")
+        temps = self._parseBestinTemperResponse(response)
+        self.heat_status = temps[0]
+        self.heat_target_temp = temps[1]
+        self.temperature = temps[2]
+
+    def isTemperOn(self):
+        return self.heat_status == "on"
+
 
 if __name__ == '__main__':
+    import ipdb
     _LOGGER.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.DEBUG)
@@ -278,3 +292,5 @@ if __name__ == '__main__':
 
     for room in rooms:
         print(room)
+
+    ipdb.set_trace()

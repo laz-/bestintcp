@@ -61,6 +61,9 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
 class BestinTCPThermostat(ClimateEntity):
     temperature_unit = const.TEMP_CELSIUS
+    target_temperature_step = const.PRECISION_HALVES
+    target_temperature_high = 40.0
+    target_temperature_low = 5.0
 
     def __init__(self, room, name, coordinator):
         self.room = room
@@ -71,6 +74,10 @@ class BestinTCPThermostat(ClimateEntity):
     def name(self):
         """Return the display name of this thermostat."""
         return f'bestin_r{self.room.name}_{self._name}'
+
+    @property
+    def unique_id(self):
+        return f'{self.room.tcp.host}:{self.room.tcp.port}_{self.name}'
 
 #    @property
 #    def entity_id(self):
@@ -100,6 +107,19 @@ class BestinTCPThermostat(ClimateEntity):
     def supported_features(self):
         return SUPPORT_TARGET_TEMPERATURE
 
+    def set_hvac_mode(self, hvac_mode):
+        """Set new target hvac mode."""
+        modes = {
+            HVAC_MODE_OFF: 'off',
+            HVAC_MODE_HEAT: 'on',
+        }
+        self.room.setTemperStatus(modes[hvac_mode])
+
+    def set_temperature(self, **kwargs):
+        """Set new target temperature."""
+        target_temp = kwargs.get(const.ATTR_TEMPERATURE)
+        self.room.setTemperStatus(self.room.heat_status, target_temp)
+
     async def async_added_to_hass(self):
         """When entity is added to hass."""
         self.async_on_remove(
@@ -115,5 +135,5 @@ class BestinTCPThermostat(ClimateEntity):
         self.room.fetchTemperStatus()
 
     async def async_update(self):
-        """Update the light."""
+        """Update the thermostat."""
         return await self.coordinator.async_request_refresh()
