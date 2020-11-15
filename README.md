@@ -12,11 +12,10 @@ Working:
 
 - lights
 - wall switches
-- climate (read-only)
+- climate
 
 To implement:
 
-- climate (write)
 - fan
 - elevator
 - gas
